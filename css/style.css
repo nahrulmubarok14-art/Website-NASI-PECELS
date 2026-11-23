@@ -3,21 +3,28 @@
   Tugas 1 WebPro, Kelompok 4
 
   Design Read:
-  Profil usaha kuliner untuk pelanggan di Blitar dan dosen penilai, bergaya
-  blok/kartu dengan palet daun pisang dan sambal, dial ENERGY 2 / RHYTHM 3 / MOTION 3.
+  Profil usaha kuliner untuk pelanggan di Blitar dan dosen penilai, dengan tata letak
+  campuran (satu jenis layout per halaman), palet daun pisang dan sambal,
+  dial ENERGY 2 / RHYTHM 3 / MOTION 3.
 
-  Alasan keputusan desain (satu baris per keputusan):
-  - Layout kartu/blok : pilihan kelompok; isi situs berupa banyak item sejenis (menu, bahan, tahap).
-  - Lebar blok berbeda : kartu penting dibuat lebih lebar agar urutan kepentingan terbaca.
-  - Hijau daun        : warna pembungkus pincuk pecel; dipakai untuk blok utama dan judul.
-  - Cokelat kacang    : warna sambal kacang; dipakai untuk blok kedua agar tidak monoton.
-  - Merah cabai       : satu-satunya aksen; hanya untuk harga, tahun, penanda halaman aktif, bilah progres.
-  - Huruf judul Young Serif : tegas dan hangat, mirip papan menu warung cetak.
-  - Huruf isi Source Sans 3 : mudah dibaca pada ukuran kecil, bukan pilihan bawaan AI.
-  - Sudut lipatan     : motif tetap; mengingatkan lipatan daun pisang pada pincuk.
-  - Sudut 3px         : kotak tegas, tidak bulat penuh, agar tombol dan kartu terbaca sebagai kotak.
-  - Bayangan keras    : hanya muncul saat hover untuk menandai kartu yang bisa ditekan, tanpa blur.
-  - Gerak             : penjelasan ada di js/script.js, setiap efek punya tujuan.
+  Pilihan layout per halaman (alasan satu baris):
+  - Beranda : Featured Image. Foto banner jadi titik fokus pertama, teks mengalir di bawahnya.
+  - Tentang : Split Screen dan Z-shape. Perkenalan berpasangan dengan foto; sejarah berupa garis waktu zig-zag.
+  - Menu    : Magazine. Satu menu utama tampil besar, lauk berupa masonry, minuman berupa daftar menu.
+  - Bahan   : Masonry. Foto bahan punya rasio berbeda-beda, masonry membiarkannya apa adanya.
+  - Proses  : Z-shape. Tujuh tahap berurutan, gambar dan teks bergantian kiri-kanan di sepanjang garis.
+  - Tim     : Two-column dengan sidebar menempel. Identitas kelompok tetap terlihat saat daftar anggota digulir.
+  - Kontak  : Split Screen. Foto lokasi berdampingan dengan keterangan, lalu teks panduan dua kolom.
+
+  Alasan keputusan visual:
+  - Hijau daun        : warna pincuk pecel; dipakai untuk pita utama dan judul.
+  - Cokelat kacang    : warna sambal kacang; dipakai untuk pita kedua agar irama tidak monoton.
+  - Merah cabai       : satu-satunya aksen; hanya untuk harga, tahun, penanda menu aktif, bilah progres.
+  - Young Serif       : tegas dan hangat, mirip papan menu warung cetak.
+  - Source Sans 3     : mudah dibaca pada ukuran kecil, bukan pilihan bawaan AI.
+  - Sudut lipatan     : motif tetap pada kartu utama; mengingatkan lipatan daun pisang pada pincuk.
+  - Sudut 3px         : kotak tegas, tidak bulat penuh.
+  - Bayangan keras    : hanya saat hover, untuk menandai kartu yang bisa ditekan; tanpa blur.
   - Tema terang tetap : foto makanan paling jujur pada latar terang; tidak ada tombol tema.
 */
 
@@ -40,6 +47,7 @@
   --lebar: 1200px;
   --jarak: clamp(14px, 2vw, 24px);
   --pinggir: clamp(16px, 4vw, 40px);
+  --ruang: clamp(32px, 5vw, 72px);
   --sudut: 3px;
   --luncur: cubic-bezier(0.22, 0.7, 0.2, 1);
 }
@@ -70,18 +78,12 @@ img {
   height: auto;
 }
 
-[hidden] {
-  display: none !important;
+figure {
+  margin: 0;
 }
 
-/* teks untuk pembaca layar saja */
-.hanya-baca {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+[hidden] {
+  display: none !important;
 }
 
 button,
@@ -97,6 +99,16 @@ label[for] {
   outline-offset: 3px;
 }
 
+/* teks untuk pembaca layar saja */
+.hanya-baca {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ========== 2. Tipografi ========== */
 h1,
 h2,
@@ -110,8 +122,8 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(2.1rem, 5.4vw, 3.6rem);
-  line-height: 1.06;
+  font-size: clamp(2rem, 5.2vw, 3.6rem);
+  line-height: 1.08;
 }
 
 h2 {
@@ -135,7 +147,7 @@ main a {
   color: var(--daun);
   text-underline-offset: 0.2em;
   text-decoration-thickness: 1.5px;
-  transition: text-decoration-thickness 0.2s var(--luncur), color 0.2s;
+  transition: text-decoration-thickness 0.2s var(--luncur);
 }
 
 main a:hover {
@@ -186,10 +198,6 @@ header.sembunyi {
   gap: 0.75rem;
   color: var(--daun);
   text-decoration: none;
-}
-
-.merek figure {
-  margin: 0;
 }
 
 .merek img {
@@ -340,244 +348,65 @@ nav a[aria-current="page"] {
   }
 }
 
-/* ========== 4. Grid utama dan blok ========== */
+/* ========== 4. Dasar halaman: kolom isi, bagian, dan pita ========== */
 main {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--jarak);
   max-width: var(--lebar);
   margin: 0 auto;
-  padding: clamp(20px, 4vw, 48px) var(--pinggir) clamp(48px, 8vw, 96px);
+  padding: 0 var(--pinggir);
 }
 
-/* blok teks: kotak putih dengan sudut terlipat */
 main > section {
   position: relative;
-  grid-column: 1 / -1;
-  min-width: 0;
-  padding: clamp(20px, 3vw, 36px);
-  background: var(--putih);
-  border: 1px solid var(--garis);
-  border-radius: var(--sudut);
+  padding-block: var(--ruang);
 }
 
-main > section::after,
-article::after {
-  content: "";
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  width: 26px;
-  height: 26px;
-  background: linear-gradient(225deg, var(--kertas) 50%, var(--lipat, var(--daun)) 50%);
-  pointer-events: none;
+main > section:first-of-type {
+  padding-top: clamp(24px, 4vw, 48px);
 }
 
-/* bagian yang isinya kumpulan kartu tidak berkotak, kartunya yang berkotak */
-main > section:has(article),
-.proses main > section:has(> ol) {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--jarak);
-  padding: 0;
-  background: none;
-  border: 0;
-}
-
-main > section:has(article)::after,
-.proses main > section:has(> ol)::after {
-  display: none;
-}
-
-main > section:has(article) > h2,
-.proses main > section:has(> ol) > h2,
-main > section:has(article) > p,
-.proses main > section:has(> ol) > p {
-  grid-column: 1 / -1;
-  margin-bottom: 0;
-}
-
-main > section:has(article) > h2,
-.proses main > section:has(> ol) > h2 {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-main > section:has(article) > h2::after,
-.proses main > section:has(> ol) > h2::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--garis);
-}
-
-/* ========== 5. Kartu ========== */
-article {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  grid-column: span var(--rentang, 12);
-  min-width: 0;
-  background: var(--putih);
-  border: 1px solid var(--garis);
-  border-radius: var(--sudut);
-  transition: transform 0.28s var(--luncur), box-shadow 0.28s var(--luncur);
-}
-
-article:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: 6px 6px 0 var(--daun);
-}
-
-article > h3 {
-  margin: 1.1rem 1.25rem 0.5rem;
-}
-
-article > p,
-article > ul {
-  margin-left: 1.25rem;
-  margin-right: 1.25rem;
-}
-
-article > :last-child {
-  margin-bottom: 1.25rem;
-}
-
-article figure {
-  order: -1;
-  margin: 0;
-  overflow: hidden;
-  aspect-ratio: var(--rasio, 4 / 3);
-  background: #dfe5d2;
-}
-
-article figure img,
-.buka-gambar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-article figure img {
-  transition: transform 0.9s var(--luncur);
-}
-
-article:hover figure img {
-  transform: scale(1.06);
-}
-
-.buka-gambar {
-  display: block;
-  padding: 0;
-  border: 0;
-  background: none;
-}
-
-/* keterangan gambar sudah terwakili judul kartu; tetap ada untuk pembaca layar dan kotak perbesar */
-article figcaption,
-main > section > figure figcaption {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/* baris harga */
-p:has(> strong:first-child) {
-  margin-top: auto;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--garis);
-  font-family: var(--huruf-judul);
-  font-size: 1.3rem;
-  color: var(--cabai);
-}
-
-p > strong:first-child {
-  margin-right: 0.4rem;
-  font-family: var(--huruf-isi);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--tinta-lembut);
-}
-
-article ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-article ul li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid var(--garis);
-}
-
-article > p + p {
-  color: var(--tinta-lembut);
-}
-
-/* ========== 6. Blok gelap (hijau dan cokelat) ========== */
+/* pita: latar berwarna sampai tepi layar, isi tetap di kolom */
 .beranda main > section:nth-of-type(3),
 .tentang main > section:nth-of-type(4),
-.kontak main > section:nth-of-type(3),
-.tim main > section:nth-of-type(4),
-.menu main > section:nth-of-type(2) > article,
-.tim main > section:nth-of-type(5) > article:first-of-type {
+.kontak main > section:nth-of-type(3) {
   --fokus: var(--krem);
-  --lipat: rgba(255, 255, 255, 0.3);
   background: var(--daun);
-  border-color: var(--daun);
   color: var(--krem);
+  box-shadow: 0 0 0 100vmax var(--daun);
+  clip-path: inset(0 -100vmax);
 }
 
-.beranda main > section:nth-of-type(4),
+.beranda main > section:nth-of-type(5),
 .tentang main > section:nth-of-type(6),
-.kontak main > section:nth-of-type(5),
+.proses main > section:last-of-type,
 .menu main > section:nth-of-type(6) {
   --fokus: var(--krem);
-  --lipat: rgba(255, 255, 255, 0.3);
   background: var(--kacang);
-  border-color: var(--kacang);
   color: var(--krem);
+  box-shadow: 0 0 0 100vmax var(--kacang);
+  clip-path: inset(0 -100vmax);
 }
 
 .beranda main > section:nth-of-type(3) :is(h1, h2, h3, a),
 .tentang main > section:nth-of-type(4) :is(h1, h2, h3, a),
 .kontak main > section:nth-of-type(3) :is(h1, h2, h3, a),
-.tim main > section:nth-of-type(4) :is(h1, h2, h3, a),
-.menu main > section:nth-of-type(2) > article :is(h1, h2, h3, a),
-.tim main > section:nth-of-type(5) > article:first-of-type :is(h1, h2, h3, a),
-.beranda main > section:nth-of-type(4) :is(h1, h2, h3, a),
+.beranda main > section:nth-of-type(5) :is(h1, h2, h3, a),
 .tentang main > section:nth-of-type(6) :is(h1, h2, h3, a),
-.kontak main > section:nth-of-type(5) :is(h1, h2, h3, a),
+.proses main > section:last-of-type :is(h1, h2, h3, a),
 .menu main > section:nth-of-type(6) :is(h1, h2, h3, a) {
   color: var(--krem);
 }
 
-.menu main > section:nth-of-type(2) > article p:has(> strong:first-child) {
-  color: var(--krem);
-  border-top-color: rgba(255, 255, 255, 0.35);
+/* pola "label di kiri, isi di kanan" untuk teks bacaan */
+.beranda main > section:is(:nth-of-type(2), :nth-of-type(4)),
+.tentang main > section:is(:nth-of-type(2), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)),
+.menu main > section:nth-of-type(5),
+.kontak main > section:nth-of-type(8) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem 3rem;
 }
 
-.menu main > section:nth-of-type(2) > article p > strong:first-child {
-  color: rgba(246, 248, 241, 0.85);
-}
-
-.menu main > section:nth-of-type(2) > article > p + p {
-  color: rgba(246, 248, 241, 0.9);
-}
-
-.menu main > section:nth-of-type(2) > article::after,
-.tim main > section:nth-of-type(5) > article:first-of-type::after {
-  --lipat: rgba(255, 255, 255, 0.3);
-}
-
-/* ========== 7. Tabel dan daftar ========== */
+/* ========== 5. Tabel, daftar, dan blok umum ========== */
 .gulung {
   overflow-x: auto;
 }
@@ -618,13 +447,13 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: var(--kertas);
+  background: rgba(30, 77, 54, 0.06);
 }
 
 dl {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.6rem 2rem;
+  gap: 0.6rem 1.5rem;
   margin: 0;
 }
 
@@ -641,157 +470,204 @@ ul {
   padding-left: 1.3rem;
 }
 
-main > section ol li::marker {
+main ol li::marker {
   font-family: var(--huruf-judul);
   color: inherit;
 }
 
-/* ========== 8. Halaman: beranda ========== */
-/* pembuka tiap halaman: judul di kiri, penjelasan di kanan */
-.menu main > section:first-of-type,
-.bahan main > section:first-of-type,
-.proses main > section:first-of-type,
-.tim main > section:first-of-type {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--jarak);
+/* keterangan foto yang hanya mengulang judul disembunyikan secara visual */
+.menu figcaption,
+.bahan figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.menu main > section:first-of-type > *,
-.bahan main > section:first-of-type > *,
-.proses main > section:first-of-type > *,
-.tim main > section:first-of-type > * {
-  grid-column: 1 / -1;
+figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--tinta-lembut);
 }
 
-/* beranda: foto banner jadi titik fokus, teks di bawahnya rata kiri */
+.buka-gambar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+figure img {
+  width: 100%;
+  height: auto;
+}
+
+figure {
+  overflow: hidden;
+  border-radius: var(--sudut);
+}
+
+/* sudut terlipat: motif tetap pada kartu utama */
+.menu main > section:nth-of-type(2) > article::after,
+.menu main > section:nth-of-type(3) > article::after,
+.tim main > section:nth-of-type(4)::after,
+.tim main > section:nth-of-type(5) > article:first-of-type::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(225deg, var(--kertas) 50%, var(--lipat, var(--daun)) 50%);
+  pointer-events: none;
+}
+
+/* ========== 6. Beranda: Featured Image ========== */
 .beranda main > section:first-of-type {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--jarak);
-  padding: 0;
-  background: none;
-  border: 0;
-}
-
-.beranda main > section:first-of-type::after {
-  display: none;
-}
-
-.beranda main > section:first-of-type > * {
-  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem 3rem;
 }
 
 .beranda main > section:first-of-type > figure {
-  grid-row: 1;
+  order: -1;
   position: relative;
-  margin: 0 0 1.5rem;
-  overflow: hidden;
   aspect-ratio: 5 / 2;
-  border-radius: var(--sudut);
+  margin-bottom: 1rem;
   background: var(--daun);
 }
 
 .beranda main > section:first-of-type > figure img {
-  width: 100%;
   height: 100%;
   object-fit: cover;
   transform: scale(1.12) translateY(var(--geser, 0px));
 }
 
-.beranda main > section:first-of-type > h1 {
-  grid-row: 2;
-}
-
 .beranda main > section:first-of-type > p:nth-of-type(1) {
-  grid-row: 3;
   font-family: var(--huruf-judul);
   font-size: clamp(1.2rem, 2.2vw, 1.6rem);
   color: var(--kacang);
 }
 
 .beranda main > section:first-of-type > h2 {
-  grid-row: 2;
-  align-self: end;
+  margin-top: 1rem;
 }
 
-.beranda main > section:first-of-type > p:nth-of-type(2) {
-  grid-row: 3;
+/* pita hijau: kalimat pembuka usaha, besar dan terbaca */
+.beranda main > section:nth-of-type(3) > p {
+  max-width: 44ch;
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  line-height: 1.5;
 }
 
-/* daftar tautan halaman: blok dengan lebar berbeda */
-.beranda main > section:last-of-type {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: var(--jarak);
-  padding: 0;
-  background: none;
-  border: 0;
+/* pita cokelat: satu kalimat utama, dua pendukung */
+.beranda main > section:nth-of-type(5) > p:first-of-type {
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
 }
 
-.beranda main > section:last-of-type::after {
-  display: none;
-}
-
-.beranda main > section:last-of-type > h2,
-.beranda main > section:last-of-type > p {
-  grid-column: 1 / -1;
-  margin-bottom: 0;
-}
-
+/* daftar halaman: baris panjang, bukan kartu */
 .beranda main > section:last-of-type > ul {
-  display: contents;
-  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
+  border-top: 2px solid var(--daun);
 }
 
 .beranda main > section:last-of-type li {
   position: relative;
-  grid-column: span var(--rentang, 12);
-  padding: 1.25rem;
-  background: var(--putih);
-  border: 1px solid var(--garis);
-  border-radius: var(--sudut);
-  transition: transform 0.28s var(--luncur), box-shadow 0.28s var(--luncur);
+  padding: 1.1rem 0.5rem;
+  border-bottom: 1px solid var(--garis);
+  transition: padding-left 0.35s var(--luncur), background 0.35s;
 }
 
 .beranda main > section:last-of-type li:hover,
 .beranda main > section:last-of-type li:focus-within {
-  transform: translate(-4px, -4px);
-  box-shadow: 6px 6px 0 var(--daun);
+  padding-left: 1.25rem;
+  background: rgba(30, 77, 54, 0.07);
 }
 
 .beranda main > section:last-of-type li a {
   font-family: var(--huruf-judul);
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   text-decoration: none;
 }
 
-/* seluruh blok bisa diklik: area tautan dilebarkan ke kartu */
+/* seluruh baris bisa diklik */
 .beranda main > section:last-of-type li a::before {
   content: "";
   position: absolute;
   inset: 0;
 }
 
-/* ========== 9. Halaman: tentang ========== */
+/* ========== 7. Tentang: Split Screen dan Z-shape ========== */
 .tentang main > section:first-of-type {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem 4rem;
 }
 
 .tentang main > section:first-of-type > figure {
-  margin: 1.25rem 0 0;
-  overflow: hidden;
+  margin-top: 1.25rem;
   aspect-ratio: 4 / 5;
-  border-radius: var(--sudut);
 }
 
 .tentang main > section:first-of-type > figure img {
-  width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* garis waktu sejarah */
+.tentang main > section:nth-of-type(3) {
+  position: relative;
+}
+
+.tentang main > section:nth-of-type(3) > p {
+  margin-bottom: 1.5rem;
+}
+
+.tentang main > section:nth-of-type(3) > article {
+  position: relative;
+  margin: 0 0 1.75rem;
+  padding: 0 0 0 2rem;
+}
+
+.tentang main > section:nth-of-type(3)::before {
+  content: "";
+  position: absolute;
+  top: 9rem;
+  bottom: var(--ruang);
+  left: 6px;
+  width: 3px;
+  background: var(--garis);
+}
+
+.tentang main > section:nth-of-type(3) > article::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  background: var(--cabai);
+}
+
+.tentang main > section:nth-of-type(3) h3 {
+  font-size: 1.45rem;
+}
+
+.tentang main > section:nth-of-type(3) time {
+  font-size: 1.15em;
+}
+
+/* visi dan misi pada pita hijau */
+.tentang main > section:nth-of-type(4) > p {
+  font-size: 1.15rem;
 }
 
 .tentang main > section:nth-of-type(4) ol {
@@ -799,43 +675,21 @@ main > section ol li::marker {
 }
 
 .tentang main > section:nth-of-type(4) li {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 
-/* ========== 10. Halaman: menu ========== */
-.menu main > section:nth-of-type(2) > article {
+/* ========== 8. Menu: Magazine ========== */
+.menu main > section:first-of-type {
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem 3rem;
 }
 
-.menu main > section:nth-of-type(2) > article figure {
-  --rasio: 3 / 2;
-}
-
-.menu main > section:nth-of-type(2) > article > h3 {
-  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
-}
-
-.menu main > section:nth-of-type(3) > article figure {
-  --rasio: 16 / 9;
-}
-
-.menu main > section:nth-of-type(4) > article {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
-.menu main > section:nth-of-type(4) > article figure {
-  --rasio: 16 / 9;
-}
-
-/* kelompok menu yang disaring oleh tombol filter */
 .filter {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
-  margin: 1.5rem 0 0;
+  margin: 1.25rem 0 0;
 }
 
 .filter button {
@@ -862,19 +716,234 @@ main > section ol li::marker {
   color: var(--putih);
 }
 
+main > section {
+  transition: opacity 0.3s var(--luncur), transform 0.3s var(--luncur);
+}
+
 .kelompok-keluar {
   opacity: 0;
   transform: scale(0.98);
 }
 
-main > section {
-  transition: opacity 0.3s var(--luncur), transform 0.3s var(--luncur);
+.menu main > section:is(:nth-of-type(2), :nth-of-type(3), :nth-of-type(4)) > h2 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.menu main > section:is(:nth-of-type(2), :nth-of-type(3), :nth-of-type(4)) > h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--garis);
+}
+
+/* menu utama: kartu besar bergaya majalah */
+.menu main > section:nth-of-type(2) > article {
+  --fokus: var(--krem);
+  --lipat: rgba(255, 255, 255, 0.3);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--daun);
+  color: var(--krem);
+  border-radius: var(--sudut);
+  overflow: hidden;
+  transition: transform 0.28s var(--luncur), box-shadow 0.28s var(--luncur);
+}
+
+.menu main > section:nth-of-type(2) > article:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--daun-tua);
+}
+
+.menu main > section:nth-of-type(2) > article > figure {
+  order: -1;
+  border-radius: 0;
+}
+
+.menu main > section:nth-of-type(2) > article > figure img {
+  transition: transform 0.9s var(--luncur);
+}
+
+.menu main > section:nth-of-type(2) > article:hover figure img {
+  transform: scale(1.05);
+}
+
+.menu main > section:nth-of-type(2) > article > :not(figure) {
+  margin-inline: 1.25rem;
+}
+
+.menu main > section:nth-of-type(2) > article > h3 {
+  margin-top: 1.25rem;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  color: var(--krem);
+}
+
+.menu main > section:nth-of-type(2) > article > :last-child {
+  margin-bottom: 1.5rem;
+}
+
+/* baris harga */
+.menu p:has(> strong:first-child) {
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--garis);
+  font-family: var(--huruf-judul);
+  font-size: 1.3rem;
+  color: var(--cabai);
+}
+
+.menu p > strong:first-child {
+  margin-right: 0.4rem;
+  font-family: var(--huruf-isi);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--tinta-lembut);
+}
+
+.menu main > section:nth-of-type(2) > article p:has(> strong:first-child) {
+  color: var(--krem);
+  border-top-color: rgba(255, 255, 255, 0.35);
+}
+
+.menu main > section:nth-of-type(2) > article p > strong:first-child {
+  color: rgba(246, 248, 241, 0.85);
+}
+
+/* lauk: masonry, tinggi kartu mengikuti isi */
+.menu main > section:nth-of-type(3) {
+  columns: 1;
+  column-gap: var(--jarak);
+}
+
+.menu main > section:nth-of-type(3) > :is(h2, p) {
+  column-span: all;
+}
+
+.menu main > section:nth-of-type(3) > p {
+  margin-bottom: 1.25rem;
+}
+
+.menu main > section:nth-of-type(3) > article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--jarak);
+  break-inside: avoid;
+  background: var(--putih);
+  border: 1px solid var(--garis);
+  border-radius: var(--sudut);
+  transition: transform 0.28s var(--luncur), box-shadow 0.28s var(--luncur);
+}
+
+.menu main > section:nth-of-type(3) > article:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--daun);
+}
+
+.menu main > section:nth-of-type(3) > article > figure {
+  order: -1;
+  aspect-ratio: var(--rasio, 1 / 1);
+  border-radius: var(--sudut) var(--sudut) 0 0;
+}
+
+.menu main > section:nth-of-type(3) > article > figure img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--luncur);
+}
+
+.menu main > section:nth-of-type(3) > article:hover figure img {
+  transform: scale(1.06);
+}
+
+.menu main > section:nth-of-type(3) > article:nth-of-type(2) {
+  --rasio: 3 / 4;
+}
+
+.menu main > section:nth-of-type(3) > article:nth-of-type(3) {
+  --rasio: 4 / 5;
+}
+
+.menu main > section:nth-of-type(3) > article:nth-of-type(4) {
+  --rasio: 2 / 3;
+}
+
+.menu main > section:nth-of-type(3) > article > :not(figure) {
+  margin-inline: 1.25rem;
+}
+
+.menu main > section:nth-of-type(3) > article > h3 {
+  margin-top: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.menu main > section:nth-of-type(3) > article > :last-child {
+  margin-bottom: 1.25rem;
+}
+
+/* minuman: daftar menu, satu baris per minuman */
+.menu main > section:nth-of-type(4) > p {
+  margin-bottom: 1rem;
+}
+
+.menu main > section:nth-of-type(4) > article {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 1.1rem;
+  padding: 1.1rem 0;
+  border-top: 1px dashed var(--kacang);
+}
+
+.menu main > section:nth-of-type(4) > article:last-of-type {
+  border-bottom: 1px dashed var(--kacang);
+}
+
+.menu main > section:nth-of-type(4) > article > figure {
+  grid-column: 1;
+  grid-row: 1 / span 4;
+  align-self: start;
+  aspect-ratio: 1 / 1;
+}
+
+.menu main > section:nth-of-type(4) > article > figure img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu main > section:nth-of-type(4) > article > :not(figure) {
+  grid-column: 2;
+  margin: 0 0 0.5rem;
+}
+
+.menu main > section:nth-of-type(4) > article > h3 {
+  margin-bottom: 0.25rem;
+}
+
+.menu main > section:nth-of-type(4) > article > p:has(> strong) {
+  margin-top: 0.25rem;
+}
+
+.menu main > section:nth-of-type(4) ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu main > section:nth-of-type(4) ul li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--garis);
 }
 
 /* pilihan suhu minuman, dibuat oleh JavaScript */
 .pilih-suhu {
   display: inline-flex;
-  margin: 0 1.25rem 0.75rem;
+  width: max-content;
   border: 2px solid var(--daun);
   border-radius: var(--sudut);
   overflow: hidden;
@@ -904,31 +973,86 @@ main > section {
 }
 
 .harga-suhu {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 
-/* ========== 11. Halaman: bahan ========== */
-.bahan main > section:nth-of-type(2) > article figure,
-.bahan main > section:nth-of-type(3) > article figure {
-  --rasio: 3 / 2;
+/* rekap harga */
+.menu main > section:nth-of-type(5) table {
+  margin-top: 0.5rem;
 }
 
-.bahan main > section:nth-of-type(4) > article {
+/* ========== 9. Bahan: Masonry ========== */
+.bahan main > section:first-of-type {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem 3rem;
 }
 
-.bahan main > section:nth-of-type(4) > article figure {
-  --rasio: 4 / 3;
+.bahan main > section:nth-of-type(n + 2) > h2 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  column-span: all;
 }
 
-/* ========== 12. Halaman: proses ========== */
+.bahan main > section:nth-of-type(n + 2) > h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--garis);
+}
+
+.bahan main > section:nth-of-type(n + 2) {
+  columns: 1;
+  column-gap: clamp(20px, 3vw, 40px);
+  padding-block: calc(var(--ruang) * 0.6);
+}
+
+.bahan main > section:nth-of-type(n + 2) > article {
+  margin-bottom: 2rem;
+  break-inside: avoid;
+}
+
+.bahan article figure img {
+  transition: transform 0.9s var(--luncur);
+}
+
+.bahan article:hover figure img {
+  transform: scale(1.05);
+}
+
+.bahan article > h3 {
+  margin: 0.9rem 0 0.35rem;
+}
+
+.bahan article > p {
+  margin-bottom: 0.5rem;
+}
+
+.bahan article > p + p {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--garis);
+  font-size: 0.97rem;
+  color: var(--tinta-lembut);
+}
+
+/* ========== 10. Proses: Z-shape ========== */
+.proses main > section:first-of-type {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem 3rem;
+}
+
+.proses main > section:nth-of-type(2) > h2 {
+  margin-bottom: 2rem;
+}
+
 .proses ol {
   --progres-tahap: 0%;
   position: relative;
-  grid-column: 1 / -1;
   display: grid;
-  gap: calc(var(--jarak) * 1.5);
+  gap: clamp(36px, 6vw, 72px);
   margin: 0;
   padding: 0 0 0 44px;
   list-style: none;
@@ -957,25 +1081,14 @@ main > section {
 .proses ol > li {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  padding: clamp(16px, 2.4vw, 28px);
-  background: var(--putih);
-  border: 1px solid var(--garis);
-  border-radius: var(--sudut);
+  gap: 0.75rem;
   counter-increment: tahap;
-  transition: transform 0.28s var(--luncur), box-shadow 0.28s var(--luncur);
-}
-
-.proses ol > li:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: 6px 6px 0 var(--daun);
 }
 
 .proses ol > li::before {
   content: counter(tahap);
   position: absolute;
-  top: 22px;
+  top: 0;
   left: -44px;
   z-index: 2;
   display: grid;
@@ -994,79 +1107,146 @@ main > section {
   background: var(--cabai);
 }
 
-.proses ol > li figure {
-  margin: 0;
-  overflow: hidden;
-  border-radius: var(--sudut);
+.proses ol > li figure img {
+  transition: transform 0.9s var(--luncur);
 }
 
-.proses ol > li figure img,
-.proses ol > li .buka-gambar {
-  width: 100%;
-  height: auto;
-}
-
-.proses ol > li figcaption {
-  margin-top: 0.4rem;
-  font-size: 0.95rem;
-  color: var(--tinta-lembut);
+.proses ol > li:hover figure img {
+  transform: scale(1.04);
 }
 
 .proses ol > li h3 {
-  margin-bottom: 0.4rem;
+  margin: 0.25rem 0 0;
 }
 
+/* pita cokelat: kebersihan */
 .proses main > section:last-of-type {
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 3rem;
 }
 
-/* ========== 13. Halaman: tim ========== */
-.tim main > section:nth-of-type(5) > .gulung,
-.tim main > section:nth-of-type(5) > table {
-  grid-column: 1 / -1;
-  padding: clamp(16px, 2.4vw, 28px);
-  background: var(--putih);
-  border: 1px solid var(--garis);
+/* ========== 11. Tim: Two-column dengan sidebar menempel ========== */
+.tim main > section:first-of-type > h1 {
+  margin-bottom: 0.5em;
+}
+
+.tim main > section:nth-of-type(4) {
+  --fokus: var(--krem);
+  --lipat: rgba(255, 255, 255, 0.3);
+  margin-top: 1rem;
+  padding: clamp(20px, 3vw, 32px);
+  background: var(--daun);
+  color: var(--krem);
   border-radius: var(--sudut);
 }
 
-.tim article > ul {
-  margin-bottom: 0.75rem;
+.tim main > section:nth-of-type(4) h2 {
+  color: var(--krem);
+}
+
+.tim main > section:nth-of-type(4) dl {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+}
+
+.tim main > section:nth-of-type(4) dt {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(246, 248, 241, 0.8);
+}
+
+.tim main > section:nth-of-type(5) > h2 {
+  margin-bottom: 1rem;
+}
+
+.tim main > section:nth-of-type(5) > .gulung {
+  margin-bottom: 2rem;
+}
+
+.tim main > section:nth-of-type(5) > article {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.25rem 2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--garis);
+}
+
+.tim main > section:nth-of-type(5) > article h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.tim main > section:nth-of-type(5) > article ul {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
   font-size: 0.97rem;
 }
 
-.tim article > ul li {
-  justify-content: flex-start;
+.tim main > section:nth-of-type(5) > article ul li {
+  padding: 0.2rem 0;
+  border-bottom: 1px solid var(--garis);
+}
+
+.tim main > section:nth-of-type(5) > article > p {
+  color: var(--tinta-lembut);
+}
+
+/* ketua kelompok disorot sebagai kartu hijau */
+.tim main > section:nth-of-type(5) > article:first-of-type {
+  --fokus: var(--krem);
+  --lipat: rgba(255, 255, 255, 0.3);
+  margin-bottom: 0.5rem;
+  padding: 1.5rem;
+  background: var(--daun);
+  border-top: 0;
+  border-radius: var(--sudut);
+  color: var(--krem);
+}
+
+.tim main > section:nth-of-type(5) > article:first-of-type h3 {
+  color: var(--krem);
 }
 
 .tim main > section:nth-of-type(5) > article:first-of-type ul li {
   border-bottom-color: rgba(255, 255, 255, 0.3);
 }
 
-.tim main > section:nth-of-type(5) > article:first-of-type > p + p,
 .tim main > section:nth-of-type(5) > article:first-of-type > p {
   color: rgba(246, 248, 241, 0.92);
 }
 
-.tim main > section:nth-of-type(4) dl {
-  margin-top: 0.5rem;
-}
-
-/* ========== 14. Halaman: kontak ========== */
+/* ========== 12. Kontak: Split Screen ========== */
 .kontak main > section:first-of-type {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem 4rem;
 }
 
 .kontak main > section:first-of-type > figure {
-  margin: 1.25rem 0 0;
-  overflow: hidden;
-  border-radius: var(--sudut);
+  aspect-ratio: 4 / 3;
 }
 
 .kontak main > section:first-of-type > figure img {
-  width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kontak main > section:nth-of-type(2) > h2 {
+  margin-bottom: 0.75rem;
+}
+
+.kontak main > section:nth-of-type(2) th {
+  width: 40%;
+  font-weight: 600;
+  color: var(--tinta-lembut);
+}
+
+.kontak main > section:nth-of-type(2) td {
+  font-size: 1.15rem;
 }
 
 .kontak address {
@@ -1090,7 +1270,18 @@ main > section {
   color: var(--putih);
 }
 
-/* ========== 15. Footer ========== */
+.kontak main > section:nth-of-type(3) > p {
+  max-width: 48ch;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  line-height: 1.5;
+}
+
+.kontak main > section:is(:nth-of-type(4), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)) {
+  padding-block: calc(var(--ruang) * 0.7);
+  border-top: 3px solid var(--daun);
+}
+
+/* ========== 13. Footer ========== */
 footer {
   display: flex;
   flex-wrap: wrap;
@@ -1115,7 +1306,7 @@ footer p:nth-child(2) {
   font-weight: 700;
 }
 
-/* ========== 16. Komponen buatan JavaScript ========== */
+/* ========== 14. Komponen buatan JavaScript ========== */
 .progres {
   position: fixed;
   top: 0;
@@ -1207,19 +1398,25 @@ footer p:nth-child(2) {
 }
 
 .lightbox figure {
-  margin: 0;
+  overflow: visible;
 }
 
 .lightbox img {
   max-height: 78vh;
   margin: 0 auto;
+  width: auto;
   border-radius: var(--sudut);
   object-fit: contain;
 }
 
 .lightbox figcaption {
+  position: static;
+  width: auto;
+  height: auto;
   margin-top: 0.75rem;
   text-align: center;
+  color: var(--putih);
+  clip-path: none;
 }
 
 .lightbox form {
@@ -1248,7 +1445,7 @@ footer p:nth-child(2) {
   outline-color: var(--putih);
 }
 
-/* ========== 17. Gerak ========== */
+/* ========== 15. Gerak ========== */
 @keyframes halaman-masuk {
   from {
     opacity: 0;
@@ -1326,7 +1523,7 @@ footer p:nth-child(2) {
   animation-delay: calc(0.35s + var(--urut, 0) * 0.07s);
 }
 
-/* kemunculan saat digulir: kartu naik, foto dibuka seperti tirai */
+/* kemunculan saat digulir: blok naik, foto dibuka seperti tirai */
 .js .reveal {
   opacity: 0;
   translate: 0 26px;
@@ -1351,81 +1548,125 @@ footer p:nth-child(2) {
   clip-path: inset(0 0 0 0);
 }
 
-/* ========== 18. Layar lebar ========== */
+/* ========== 16. Layar menengah (640px ke atas) ========== */
 @media (min-width: 640px) {
-  .menu main > section:nth-of-type(3) > article,
-  .bahan main > section:nth-of-type(2) > article,
-  .bahan main > section:nth-of-type(3) > article,
-  .tentang main > section:nth-of-type(3) > article,
-  .tim main > section:nth-of-type(5) > article {
-    --rentang: 6;
+  .menu main > section:nth-of-type(3) {
+    columns: 2;
   }
 
-  .beranda main > section:last-of-type li {
-    --rentang: 6;
+  .bahan main > section:nth-of-type(2) {
+    columns: 2;
+  }
+
+  .bahan main > section:nth-of-type(3) {
+    columns: 2;
+  }
+
+  .menu main > section:nth-of-type(4) > article {
+    grid-template-columns: 140px minmax(0, 1fr);
   }
 }
 
+/* ========== 17. Layar lebar (900px ke atas) ========== */
 @media (min-width: 900px) {
-  /* pembuka halaman */
+  /* pembuka halaman: judul di kiri, penjelasan di kanan */
+  .menu main > section:first-of-type,
+  .bahan main > section:first-of-type,
+  .proses main > section:first-of-type {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
   .menu main > section:first-of-type > h1,
   .bahan main > section:first-of-type > h1,
-  .proses main > section:first-of-type > h1,
-  .tim main > section:first-of-type > h1 {
-    grid-column: 1 / 6;
-    grid-row: 1 / span 2;
+  .proses main > section:first-of-type > h1 {
+    grid-column: 1;
+    grid-row: 1 / span 3;
   }
 
-  .menu main > section:first-of-type > p,
-  .bahan main > section:first-of-type > p,
-  .proses main > section:first-of-type > p,
-  .tim main > section:first-of-type > p {
-    grid-column: 6 / -1;
+  .menu main > section:first-of-type > :not(h1),
+  .bahan main > section:first-of-type > :not(h1),
+  .proses main > section:first-of-type > :not(h1) {
+    grid-column: 2;
   }
 
-  .menu main > section:first-of-type > .filter {
-    grid-column: 1 / -1;
+  /* pola label kiri, isi kanan */
+  .beranda main > section:is(:nth-of-type(2), :nth-of-type(4)),
+  .tentang main > section:is(:nth-of-type(2), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)),
+  .menu main > section:nth-of-type(5),
+  .kontak main > section:nth-of-type(8) {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  }
+
+  .beranda main > section:is(:nth-of-type(2), :nth-of-type(4)) > h2,
+  .tentang main > section:is(:nth-of-type(2), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)) > h2,
+  .menu main > section:nth-of-type(5) > h2,
+  .kontak main > section:nth-of-type(8) > h2 {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    align-self: start;
+    position: sticky;
+    top: 100px;
+  }
+
+  .beranda main > section:is(:nth-of-type(2), :nth-of-type(4)) > :not(h2),
+  .tentang main > section:is(:nth-of-type(2), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)) > :not(h2),
+  .menu main > section:nth-of-type(5) > :not(h2),
+  .kontak main > section:nth-of-type(8) > :not(h2) {
+    grid-column: 2;
   }
 
   /* beranda */
-  .beranda main > section:first-of-type > h1,
+  .beranda main > section:first-of-type {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .beranda main > section:first-of-type > figure {
+    grid-column: 1 / -1;
+  }
+
+  .beranda main > section:first-of-type > h1 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
   .beranda main > section:first-of-type > p:nth-of-type(1) {
-    grid-column: 1 / 8;
+    grid-column: 1;
+    grid-row: 3;
   }
 
-  .beranda main > section:first-of-type > h2,
+  .beranda main > section:first-of-type > h2 {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+    margin-top: 0;
+  }
+
   .beranda main > section:first-of-type > p:nth-of-type(2) {
-    grid-column: 8 / -1;
-  }
-
-  .beranda main > section:nth-of-type(2) {
-    grid-column: span 7;
-  }
-
-  .beranda main > section:nth-of-type(3) {
-    grid-column: span 5;
-  }
-
-  .beranda main > section:nth-of-type(4) {
-    grid-column: span 5;
+    grid-column: 2;
+    grid-row: 3;
   }
 
   .beranda main > section:nth-of-type(5) {
-    grid-column: span 7;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem 4rem;
   }
 
-  .beranda main > section:last-of-type li:nth-child(1) { --rentang: 5; }
-  .beranda main > section:last-of-type li:nth-child(2) { --rentang: 4; }
-  .beranda main > section:last-of-type li:nth-child(3) { --rentang: 3; }
-  .beranda main > section:last-of-type li:nth-child(4) { --rentang: 3; }
-  .beranda main > section:last-of-type li:nth-child(5) { --rentang: 4; }
-  .beranda main > section:last-of-type li:nth-child(6) { --rentang: 5; }
+  .beranda main > section:nth-of-type(5) > h2,
+  .beranda main > section:nth-of-type(5) > p:first-of-type {
+    grid-column: 1 / -1;
+  }
 
-  /* tentang */
+  .beranda main > section:last-of-type > ul {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 3rem;
+  }
+
+  /* tentang: split screen */
   .tentang main > section:first-of-type {
-    grid-template-columns: minmax(0, 1fr) minmax(240px, 34%);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto 1fr;
-    column-gap: 2.5rem;
+    align-items: start;
   }
 
   .tentang main > section:first-of-type > figure {
@@ -1438,67 +1679,109 @@ footer p:nth-child(2) {
     grid-column: 1;
   }
 
-  .tentang main > section:nth-of-type(2) {
-    grid-column: span 5;
-  }
-
-  .tentang main > section:nth-of-type(4) {
-    grid-column: span 7;
-    order: 1;
-  }
-
+  /* tentang: garis waktu zig-zag */
   .tentang main > section:nth-of-type(3) {
-    order: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 0;
   }
 
-  .tentang main > section:nth-of-type(5) {
-    grid-column: span 5;
-    order: 3;
+  .tentang main > section:nth-of-type(3) > :is(h2, p) {
+    grid-column: 1 / -1;
   }
 
-  .tentang main > section:nth-of-type(6) {
-    grid-column: span 7;
-    order: 3;
+  .tentang main > section:nth-of-type(3)::before {
+    top: 9rem;
+    left: 50%;
+    translate: -1.5px 0;
   }
 
-  .tentang main > section:nth-of-type(7) {
-    order: 3;
+  .tentang main > section:nth-of-type(3) > article {
+    margin: 0 0 2.25rem;
+    padding: 0 3rem 0 0;
+    text-align: right;
   }
 
-  .tentang main > section:nth-of-type(7) {
-    columns: 2;
-    column-gap: 2.5rem;
+  .tentang main > section:nth-of-type(3) > article:nth-of-type(even) {
+    grid-column: 2;
+    margin-top: 2rem;
+    padding: 0 0 0 3rem;
+    text-align: left;
   }
 
-  .tentang main > section:nth-of-type(7) > h2 {
-    column-span: all;
+  .tentang main > section:nth-of-type(3) > article:nth-of-type(odd) {
+    grid-column: 1;
   }
 
-  .tentang main > section:nth-of-type(3) > article:nth-of-type(1),
-  .tentang main > section:nth-of-type(3) > article:nth-of-type(4) {
-    --rentang: 7;
+  .tentang main > section:nth-of-type(3) > article:nth-of-type(odd)::before {
+    left: auto;
+    right: -7.5px;
   }
 
-  .tentang main > section:nth-of-type(3) > article:nth-of-type(2),
-  .tentang main > section:nth-of-type(3) > article:nth-of-type(3) {
-    --rentang: 5;
+  .tentang main > section:nth-of-type(3) > article:nth-of-type(even)::before {
+    left: -7.5px;
   }
 
-  /* menu */
+  .tentang main > section:nth-of-type(3) > article p {
+    margin-left: auto;
+  }
+
+  .tentang main > section:nth-of-type(3) > article:nth-of-type(even) p {
+    margin-left: 0;
+  }
+
+  /* tentang: visi dan misi dua kolom */
+  .tentang main > section:nth-of-type(4) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 4rem;
+  }
+
+  .tentang main > section:nth-of-type(4) > h2 {
+    grid-column: 1 / -1;
+  }
+
+  .tentang main > section:nth-of-type(4) > h3:nth-of-type(1) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .tentang main > section:nth-of-type(4) > p:nth-of-type(1) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .tentang main > section:nth-of-type(4) > h3:nth-of-type(2) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .tentang main > section:nth-of-type(4) > p:nth-of-type(2) {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .tentang main > section:nth-of-type(4) > ol {
+    grid-column: 2;
+    grid-row: 4;
+  }
+
+  /* menu: kartu utama bergaya majalah */
   .menu main > section:nth-of-type(2) > article {
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     column-gap: 2rem;
+    align-items: start;
   }
 
-  .menu main > section:nth-of-type(2) > article figure {
+  .menu main > section:nth-of-type(2) > article > figure {
     grid-column: 1;
     grid-row: 1 / span 4;
     align-self: stretch;
-    --rasio: auto;
   }
 
-  .menu main > section:nth-of-type(2) > article figure img {
+  .menu main > section:nth-of-type(2) > article > figure img {
     min-height: 100%;
+    object-fit: cover;
   }
 
   .menu main > section:nth-of-type(2) > article > :not(figure) {
@@ -1506,122 +1789,72 @@ footer p:nth-child(2) {
   }
 
   .menu main > section:nth-of-type(2) > article > h3 {
-    margin-top: 1.5rem;
-  }
-
-  .menu main > section:nth-of-type(3) > article:nth-of-type(1),
-  .menu main > section:nth-of-type(3) > article:nth-of-type(4) {
-    --rentang: 7;
-  }
-
-  .menu main > section:nth-of-type(3) > article:nth-of-type(2),
-  .menu main > section:nth-of-type(3) > article:nth-of-type(3) {
-    --rentang: 5;
+    margin-top: 1.75rem;
   }
 
   .menu main > section:nth-of-type(4) > article {
-    grid-template-columns: 200px minmax(0, 1fr) 15rem;
-    align-items: start;
-    column-gap: 1.5rem;
+    grid-template-columns: 160px minmax(0, 1fr) 15rem;
+    column-gap: 1.75rem;
   }
 
-  .menu main > section:nth-of-type(4) > article figure {
-    grid-column: 1;
-    grid-row: 1 / span 4;
-    align-self: stretch;
-    --rasio: auto;
-  }
-
-  .menu main > section:nth-of-type(4) > article figure img {
-    min-height: 100%;
+  .menu main > section:nth-of-type(4) > article > figure {
+    grid-row: 1 / span 3;
   }
 
   .menu main > section:nth-of-type(4) > article > h3 {
     grid-column: 2;
-    margin-top: 1.1rem;
+    grid-row: 1;
   }
 
   .menu main > section:nth-of-type(4) > article > p:nth-of-type(1) {
     grid-column: 2;
-    grid-row: 2 / span 3;
+    grid-row: 2 / span 2;
   }
 
-  .menu main > section:nth-of-type(4) > article > :is(p:has(> strong), ul, .pilih-suhu) {
+  .menu main > section:nth-of-type(4) > article > .pilih-suhu,
+  .menu main > section:nth-of-type(4) > article > ul,
+  .menu main > section:nth-of-type(4) > article > p:has(> strong) {
     grid-column: 3;
+    grid-row: 1;
     margin: 0;
   }
 
-  .menu main > section:nth-of-type(4) > article > p:has(> strong) {
-    grid-row: 1;
-    margin-top: 1.1rem;
-    border-top: 0;
-    padding-top: 0;
-  }
-
+  .menu main > section:nth-of-type(4) > article > .harga-suhu,
   .menu main > section:nth-of-type(4) > article > ul {
     grid-row: 2;
   }
 
-  .menu main > section:nth-of-type(4) > article > .pilih-suhu {
-    grid-row: 1;
-    margin-top: 1.1rem;
+  .menu main > section:nth-of-type(4) > article > p:has(> strong):not(.harga-suhu) {
+    border-top: 0;
+    padding-top: 0;
   }
 
   .menu main > section:nth-of-type(4) > article > .harga-suhu {
-    grid-row: 2;
-    margin: 0 0 1.25rem;
-    padding-top: 0.5rem;
-  }
-
-  .menu main > section:nth-of-type(5) {
-    grid-column: span 7;
+    border-top: 0;
+    padding-top: 0.4rem;
   }
 
   .menu main > section:nth-of-type(6) {
-    grid-column: span 5;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* bahan */
-  .bahan main > section:nth-of-type(2) > article:nth-of-type(1) { --rentang: 7; }
-  .bahan main > section:nth-of-type(2) > article:nth-of-type(2) { --rentang: 5; }
-
-  .bahan main > section:nth-of-type(2) > article:nth-of-type(1) figure {
-    --rasio: 16 / 9;
-  }
-
-  .bahan main > section:nth-of-type(2) > article:nth-of-type(2) figure {
-    --rasio: 3 / 4;
-  }
-
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(1),
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(2) { --rentang: 6; }
-
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(3),
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(4),
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(5) { --rentang: 4; }
-
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(6) { --rentang: 7; }
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(7) { --rentang: 5; }
-
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(n + 3):nth-of-type(-n + 5) figure {
-    --rasio: 1 / 1;
-  }
-
-  .bahan main > section:nth-of-type(3) > article:nth-of-type(n + 6) figure {
-    --rasio: 16 / 9;
+  /* bahan: masonry tiga kolom untuk bahan sambal */
+  .bahan main > section:nth-of-type(3) {
+    columns: 3;
   }
 
   .bahan main > section:nth-of-type(4) > article {
+    display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     grid-template-rows: auto auto 1fr;
-    column-gap: 2rem;
+    column-gap: 2.5rem;
     align-items: start;
   }
 
-  .bahan main > section:nth-of-type(4) > article figure {
+  .bahan main > section:nth-of-type(4) > article > figure {
     grid-column: 1;
     grid-row: 1 / span 3;
-    --rasio: 4 / 3;
   }
 
   .bahan main > section:nth-of-type(4) > article > :not(figure) {
@@ -1629,90 +1862,153 @@ footer p:nth-child(2) {
   }
 
   .bahan main > section:nth-of-type(4) > article > h3 {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
   }
 
-  /* proses: gambar dan teks bergantian kiri-kanan di dalam kartu */
+  /* proses: gambar dan teks bergantian kiri-kanan */
+  .proses ol {
+    padding-left: 0;
+  }
+
+  .proses ol::before,
+  .proses ol::after {
+    left: 50%;
+    translate: -2px 0;
+  }
+
   .proses ol > li {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(56px, 9vw, 120px);
     align-items: center;
   }
 
-  .proses ol > li:nth-child(even) {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  .proses ol > li::before {
+    left: 50%;
+    translate: -17px 0;
+    top: 50%;
+    margin-top: -17px;
   }
 
   .proses ol > li > figure {
+    grid-column: 1;
     grid-row: 1 / span 2;
+  }
+
+  .proses ol > li > h3 {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .proses ol > li > p {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
   }
 
   .proses ol > li:nth-child(even) > figure {
     grid-column: 2;
   }
 
-  .proses ol > li:nth-child(even) > :not(figure) {
+  .proses ol > li:nth-child(even) > h3,
+  .proses ol > li:nth-child(even) > p {
     grid-column: 1;
   }
 
-  .proses ol > li > h3 {
-    align-self: end;
-  }
-
-  .proses ol > li > p {
-    align-self: start;
-  }
-
   .proses main > section:last-of-type {
-    columns: 2;
-    column-gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .proses main > section:last-of-type > h2 {
-    column-span: all;
+    grid-column: 1 / -1;
   }
 
-  /* tim */
+  /* tim: dua kolom, sidebar menempel */
+  .tim main {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .tim main > section {
+    grid-column: 2;
+    padding-block: 0 2.5rem;
+  }
+
+  .tim main > section:first-of-type {
+    grid-row: 1;
+    padding-top: clamp(24px, 4vw, 48px);
+  }
+
   .tim main > section:nth-of-type(2) {
-    grid-column: span 5;
+    grid-row: 2;
   }
 
   .tim main > section:nth-of-type(3) {
-    grid-column: span 7;
+    grid-row: 3;
   }
 
-  .tim main > section:nth-of-type(5) > article:nth-of-type(1) { --rentang: 6; }
-  .tim main > section:nth-of-type(5) > article:nth-of-type(2),
-  .tim main > section:nth-of-type(5) > article:nth-of-type(3) { --rentang: 3; }
-  .tim main > section:nth-of-type(5) > article:nth-of-type(4),
-  .tim main > section:nth-of-type(5) > article:nth-of-type(5) { --rentang: 6; }
+  .tim main > section:nth-of-type(5) {
+    grid-row: 4;
+  }
 
-  /* kontak */
+  .tim main > section:nth-of-type(4) {
+    position: sticky;
+    top: 100px;
+    grid-column: 1;
+    grid-row: 1 / span 4;
+    align-self: start;
+    margin-top: clamp(24px, 4vw, 48px);
+    padding: clamp(20px, 3vw, 32px);
+  }
+
+  .tim main > section:nth-of-type(5) > article {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: start;
+  }
+
+  .tim main > section:nth-of-type(5) > article > h3,
+  .tim main > section:nth-of-type(5) > article > ul {
+    grid-column: 1;
+  }
+
+  .tim main > section:nth-of-type(5) > article > p {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  /* kontak: split screen */
+  .kontak main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 4rem;
+  }
+
+  .kontak main > section {
+    grid-column: 1 / -1;
+  }
+
+  .kontak main > section:is(:nth-of-type(4), :nth-of-type(5), :nth-of-type(6), :nth-of-type(7)) {
+    grid-column: span 1;
+  }
+
   .kontak main > section:first-of-type {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 2.5rem;
     align-items: center;
   }
 
   .kontak main > section:first-of-type > figure {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1 / span 2;
-    margin-top: 0;
   }
 
   .kontak main > section:first-of-type > :not(figure) {
-    grid-column: 1;
+    grid-column: 2;
   }
-
-  .kontak main > section:nth-of-type(2) { grid-column: span 7; }
-  .kontak main > section:nth-of-type(3) { grid-column: span 5; }
-  .kontak main > section:nth-of-type(4) { grid-column: span 5; }
-  .kontak main > section:nth-of-type(5) { grid-column: span 7; }
-  .kontak main > section:nth-of-type(6) { grid-column: span 7; }
-  .kontak main > section:nth-of-type(7) { grid-column: span 5; }
 }
 
-/* ========== 19. Preferensi kurangi gerak ========== */
+/* ========== 18. Preferensi kurangi gerak ========== */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

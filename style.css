@@ -146,6 +146,8 @@ dt { font-weight: 600; margin-top: 0.8rem; }
 dd { margin: 0; }
 address { font-style: normal; }
 ul, ol { padding-left: 1.2rem; }
+main ul, main ol, main dl { margin: 0 0 1rem; }   /* hilangkan margin atas bawaan browser agar sejajar dengan judul */
+dt:first-child { margin-top: 0; }
 
 /* 9. Footer */
 footer {

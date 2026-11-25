@@ -146,8 +146,6 @@ dt { font-weight: 600; margin-top: 0.8rem; }
 dd { margin: 0; }
 address { font-style: normal; }
 ul, ol { padding-left: 1.2rem; }
-main ul, main ol, main dl { margin: 0 0 1rem; }   /* hilangkan margin atas bawaan browser agar sejajar dengan judul */
-dt:first-child { margin-top: 0; }
 
 /* 9. Footer */
 footer {
@@ -178,3 +176,15 @@ article img, ol img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit
 /* Tabel anggota kelompok */
 .anggota th:first-child, .anggota td:first-child { width: 3rem; text-align: center; }
 .anggota td:nth-child(3) { white-space: nowrap; }
+
+/* Foto kelompok: rata kiri sejajar dengan daftar identitas, rasio 16:9, tidak dipotong lagi oleh aturan galeri */
+.foto-kelompok { margin: 2rem 0 0; max-width: 640px; text-align: left; }
+.foto-kelompok img { aspect-ratio: 16 / 9; }
+
+/* Judul bagian (kolom kiri) dan isi pertama (kolom kanan) sejajar pada garis dasar teks yang sama */
+main > section + section > h2,
+main > section + section > h2 + * { align-self: baseline; }
+main > section + section > h2 + dl,
+main > section + section > h2 + ul,
+main > section + section > h2 + ol { margin-top: 0; }
+main > section + section > h2 + dl > dt:first-child { margin-top: 0; }
